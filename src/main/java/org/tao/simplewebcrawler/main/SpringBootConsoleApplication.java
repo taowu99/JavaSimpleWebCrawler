@@ -1,4 +1,4 @@
-package org.tao.simplawebcrawler.util;
+package org.tao.simplewebcrawler.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.tao.simplewebcrawler.util.WebCrawler;
 
 import java.util.Calendar;
 
 @SpringBootApplication
+@ComponentScan(basePackages = "org.tao.simplewebcrawler.util")
 public class SpringBootConsoleApplication
         implements CommandLineRunner {
 
@@ -35,7 +38,7 @@ public class SpringBootConsoleApplication
         }
 
         try {
-            crawler.crawle(args[0], "./"+Calendar.getInstance().getTime().getTime());
+            crawler.crawl(args[0], "./"+Calendar.getInstance().getTime().getTime());
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -1,47 +1,53 @@
-package org.tao.simplawebcrawler.util;
+package org.tao.simplewebcrawler.util;
 
-import org.springframework.stereotype.Service;
-
-import java.io.*;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.tao.simplewebcrawler.exception.CrawleException;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class SimpleWebCrawler implements WebCrawler{
+    @Autowired
+    HTMLLinksParser linksParser;
+
     @Override
-    public void crawle(String webpage, String rootStorepath) throws CrawleException {
+    public void crawl(String webpage, String rootStorepath) throws CrawleException {
         createPath(rootStorepath);
         Set<String> visited = new HashSet<>();
-        crawleLocal(webpage, visited, rootStorepath);
+        crawlLocal(webpage, visited, rootStorepath);
     }
 
-    protected void crawleLocal(String webpage, Set<String> visited, String targetFolder) {
+    protected Set crawlLocal(String webpage, Set<String> visited, String targetFolder) {
         visited.add(webpage);
-
+        Set<String> refs = null;
         try {
             final URL url = new URL(webpage);
             final String name = FilenameUtils.getName(url.getPath());
             String content = downloadWebPage(webpage);
-            File fl = new File(targetFolder, Optional.ofNullable(name).filter(s -> !s.isEmpty()).orElse("default.htm"));
-//            fl.createNewFile();
-            FileWriter writer = new FileWriter(fl);
-            writer.write(content);
-            writer.close();
+            refs = linksParser.parse(content);
+            System.out.println(refs);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        finally {
+            return refs;
+        }
     }
 
     protected String downloadWebPage(String webpage) throws Exception {
-        URL url = new URL(webpage);
-        InputStream is = url.openStream();  // throws an IOException
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        StringBuilder res = new StringBuilder();
+        final BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new URL(webpage).openStream()
+                ));
+        final StringBuilder res = new StringBuilder();
         do {
             String line = br.readLine();
             if (line == null)
