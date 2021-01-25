@@ -2,10 +2,10 @@ package org.tao.simplewebcrawler.util;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.tao.simplewebcrawler.main.SpringBootConsoleApplication;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -18,12 +18,12 @@ public class SimpleHTMLLinksParser implements HTMLLinksParser{
     final static String[] TAGS = new String[] {"href", "src"};
 
     @Override
-    public Set<String> parse(String htmlContent) {
+    public Set<Element> parse(String htmlContent) {
         return parseHTMLRefs(htmlContent);
     }
 
-    private Set<String> parseHTMLRefs(String content) {
-        final Set<String> refs = new HashSet<>();
+    private Set<Element> parseHTMLRefs(String content) {
+        final Set<Element> refs = new HashSet<>();
         try {
             final Document elements = Jsoup.parse(content);
             elements.getAllElements().stream()
@@ -37,7 +37,7 @@ public class SimpleHTMLLinksParser implements HTMLLinksParser{
                         for (String tag : TAGS) {
                             final String stag = s.attr(tag);
                             if (!stag.isBlank() && !stag.toLowerCase(Locale.ROOT).startsWith("javascript")) {
-                                refs.add(stag);
+                                refs.add(s);
 //                            System.out.println(tag + "=" + stag);
                             }
                         }
