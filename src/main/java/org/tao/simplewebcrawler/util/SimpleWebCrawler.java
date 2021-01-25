@@ -22,12 +22,8 @@ public class SimpleWebCrawler implements WebCrawler{
     public Map<String, Set<String>> crawl(String webpage, String outputFile) throws CrawleException {
         try {
             final Map<String, Set<String>> res = crawlLocal(new URL(webpage), new HashMap<>());
-            final FileWriter writer = new FileWriter(outputFile);
-            writer.write("site=[links]\n");
-            for (Map.Entry<String, Set<String>> entry : res.entrySet())
-                writer.write(entry.toString()+ "\n");
-            
-            writer.close();
+            new TextOutputFile().addContent(res).save(outputFile);
+
             return res;
         }
         catch (MalformedURLException e) {
@@ -49,11 +45,27 @@ public class SimpleWebCrawler implements WebCrawler{
                 final URL webpage = new URL(urls.poll());
                 final Set<String> refs = linksParser.parse(downloadWebPage(webpage.toString()));
                 for (String ref : refs) {
-                    if (ref.startsWith("http") && !ref.startsWith(webpage.getHost()))
+                    if (ref.toLowerCase(Locale.ROOT).startsWith("http")) {
+                        try {
+                            URL tmp = new URL(ref);
+                            if (!tmp.getHost().equals(wbp.getHost()) || tmp.getPort() != wbp.getPort())
+                                continue;
+                        } catch (Exception e) {
+                            // ref is not a full url, ignore error
+                        }
+                    }
+                    if (ref.startsWith("//") && ref.indexOf(wbp.getHost()) != 2)
                         continue;
-                    final String link = new URL(wbp, ref).toString();
-                    if (!visited.containsKey(link))
-                        urls.add(link);
+
+                    final URL link;
+                    if (ref.toLowerCase(Locale.ROOT).startsWith("http"))
+                        link = new URL(ref);
+                    else if (ref.startsWith("//"))
+                        link = new URL(wbp.getProtocol() + ref);
+                    else
+                        link = new URL(wbp.getProtocol(), wbp.getHost(), wbp.getPort(), ref);
+                    if (!visited.containsKey(link.toString()))
+                        urls.add(link.toString());
                 }
                 visited.put(webpage.toString(), refs);
 //                System.out.println(refs);
