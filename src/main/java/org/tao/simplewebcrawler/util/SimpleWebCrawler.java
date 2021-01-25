@@ -26,10 +26,7 @@ public class SimpleWebCrawler implements WebCrawler{
     public Map<String, Set<String>> crawl(String webpage, String rootStorepath) throws CrawleException {
         createPath(rootStorepath);
         try {
-            final URL url = new URL(webpage);
-
-            Map<String, Set<String>> visited = new HashMap<>();
-            return crawlLocal(url, visited);
+            return crawlLocal(new URL(webpage), new HashMap<>());
         }
         catch (MalformedURLException e) {
             e.printStackTrace();
@@ -41,28 +38,27 @@ public class SimpleWebCrawler implements WebCrawler{
 //        visited.put(webpage.toString(), null);
 //        Set<String> refs = null;
         try {
-            Queue<String> urls = new LinkedList<>();
+            final Queue<String> urls = new LinkedList<>();
             urls.add(wbp.toString());
             while (!urls.isEmpty()) {
-                URL webpage = new URL(urls.poll());
-//            final URL url = new URL(webpage);
-                String content = downloadWebPage(webpage.toString());
-                Set<String> refs = linksParser.parse(content);
+                final URL webpage = new URL(urls.poll());
+                final Set<String> refs = linksParser.parse(downloadWebPage(webpage.toString()));
                 for (String ref : refs) {
                     if (ref.startsWith("http") && !ref.startsWith(webpage.getHost()))
                         continue;
-                    String link = new URL(wbp, ref).toString();
+                    final String link = new URL(wbp, ref).toString();
                     if (!visited.containsKey(link))
                         urls.add(link);
                 }
                 visited.put(webpage.toString(), refs);
-                System.out.println(refs);
+//                System.out.println(refs);
             }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
         finally {
+            LOG.info(visited.toString());
             return visited;
         }
     }
