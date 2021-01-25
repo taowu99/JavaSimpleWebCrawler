@@ -41,26 +41,4 @@ public class JsonOutputFile implements OutputFile {
         writer.close();
         return this;
     }
-
-    public OutputFile save1(String outputFile) throws IOException {
-        final FileWriter writer = new FileWriter(outputFile);
-        writer.write("{\n");
-        for (Map.Entry<String, Set<String>> entry : this.content.entrySet()) {
-            writer.write("{\n");
-            writer.write("\"Site\": \""+entry.getKey() + "\"\n");
-            writer.write("\"Links\" [: ");
-            entry.getValue().forEach( v -> {
-                try {
-                    writer.write("\""+v+"\",");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            writer.write( "]\n");
-            writer.write("},\n");
-        }
-        writer.write("}");
-        writer.close();
-        return this;
-    }
 }
