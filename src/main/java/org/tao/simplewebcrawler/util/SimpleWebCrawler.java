@@ -94,7 +94,7 @@ public class SimpleWebCrawler implements WebCrawler{
             e.printStackTrace();
         }
         finally {
-            LOG.info(visited.toString());
+            LOG.debug(visited.toString());
             return visited;
         }
     }
