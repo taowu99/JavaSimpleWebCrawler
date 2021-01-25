@@ -13,7 +13,7 @@ public class SimpleWebCrawlerTest {
         String randomPath = UUID.randomUUID().toString();
         try {
             File path = new File("./" + randomPath);
-            crawler.createPath(path.getPath());
+            crawler.createFile(path.getPath());
             Assert.assertTrue(path.exists() && path.isDirectory());
             path.delete();
         }

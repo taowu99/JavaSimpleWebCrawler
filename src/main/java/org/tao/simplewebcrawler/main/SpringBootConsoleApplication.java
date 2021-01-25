@@ -32,13 +32,13 @@ public class SpringBootConsoleApplication
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
 
-        if (args == null || args.length < 1) {
-            LOG.error("Wrong format:\nPlease run the application as following: java SpringBootConsoleApplication [webpage to crawle]");
+        if (args == null || args.length < 2) {
+            LOG.error("Wrong syntax format:\nPlease run the application as following: java SpringBootConsoleApplication [webpage to crawle] [output file]");
             System.exit(1);
         }
 
         try {
-            crawler.crawl(args[0], "./"+Calendar.getInstance().getTime().getTime());
+            crawler.crawl(args[0], args[1]);
         }
         catch (Exception e) {
             e.printStackTrace();
