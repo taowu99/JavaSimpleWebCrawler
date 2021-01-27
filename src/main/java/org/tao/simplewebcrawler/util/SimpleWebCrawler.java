@@ -37,8 +37,6 @@ public class SimpleWebCrawler implements WebCrawler{
     }
 
     protected Map<String, Set<String>> crawlLocal(URL wbp, Map<String, Set<String>> visited) {
-//        visited.put(wbp.toString(), null);
-//        Set<String> refs = null;
         try {
             final Queue<String> urls = new LinkedList<>();
             urls.add(wbp.toString());

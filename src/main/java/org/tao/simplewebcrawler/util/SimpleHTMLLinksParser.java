@@ -38,7 +38,6 @@ public class SimpleHTMLLinksParser implements HTMLLinksParser{
                             final String stag = s.attr(tag);
                             if (!stag.isBlank() && !stag.toLowerCase(Locale.ROOT).startsWith("javascript")) {
                                 refs.add(s);
-//                            System.out.println(tag + "=" + stag);
                             }
                         }
                     });
